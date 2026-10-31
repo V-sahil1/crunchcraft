@@ -175,12 +175,14 @@ export default function Hero() {
     { scope: root },
   );
 
-  // pt-28 leaves room for the transparent header that <main> slides under (see App.jsx).
+  // The hero is exactly one screen tall and sizes its contents off the screen height (see .hero-fit in
+  // index.css). The top padding clears the transparent header <main> slides under (see App.jsx); the
+  // bottom padding leaves room for the ticker ribbons that straddle the seam.
   return (
     <section
       id="top"
       ref={root}
-      className={`relative flex flex-col overflow-hidden pt-28 pb-24 ${t(
+      className={`hero-fit relative flex flex-col h-[100svh] min-h-[560px] overflow-hidden pt-[var(--hero-top)] pb-[var(--hero-bottom)] ${t(
         '',
         'bg-gradient-to-br from-[#ff6699] via-[#ec3b83] to-[#d82a75] text-white',
       )}`}
@@ -202,9 +204,9 @@ export default function Hero() {
       )}
 
       {/* Top meta row */}
-      <div className="relative z-20 container-x flex flex-wrap items-center justify-end gap-space-sm">
+      <div className="absolute z-20 inset-x-0 top-[calc(var(--hero-top)-8px)] container-x flex flex-wrap items-center justify-end gap-space-sm pointer-events-none">
         <div
-          className={`hidden sm:inline-flex items-center gap-space-sm px-space-md py-1.5 rounded-full font-label text-label-sm ${t(
+          className={`hero-rating hidden sm:inline-flex pointer-events-auto items-center gap-space-sm px-space-md py-1.5 rounded-full font-label text-label-sm ${t(
             'bg-surface-container-low text-on-surface-variant',
             'bg-white/95 shadow-md text-on-surface border border-pink-200',
           )}`}
@@ -216,9 +218,9 @@ export default function Hero() {
       </div>
 
       {/* Stage: rolling type behind, pack in front */}
-      <div className="relative flex-1 flex flex-col justify-center min-h-[460px] sm:min-h-[560px] lg:min-h-[680px] py-space-lg [perspective:1200px]">
+      <div className="relative flex-1 min-h-0 flex flex-col justify-center [perspective:1200px]">
         <div
-          className={`absolute inset-0 flex flex-col justify-center gap-[1vw] font-display uppercase leading-[0.86] select-none pointer-events-none text-[clamp(5.5rem,15vw,15rem)] ${t(
+          className={`absolute inset-0 flex flex-col justify-center gap-[1vw] font-display uppercase leading-[0.86] select-none pointer-events-none text-[length:var(--hero-type)] ${t(
             'font-extrabold tracking-[-0.04em]',
             'font-black tracking-[-0.02em]',
           )}`}
@@ -262,7 +264,7 @@ export default function Hero() {
                 src={PACK_IMG}
                 alt="Dark Truffle & Roasted Garlic crisps pouch"
                 fetchpriority="high"
-                className={`hero-tilt relative w-[min(54vw,260px)] sm:w-[340px] lg:w-[400px] h-auto ${t(
+                className={`hero-tilt relative h-[var(--hero-pack)] w-auto max-w-[72vw] object-contain ${t(
                   'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
                   'drop-shadow-[0_32px_44px_rgba(110,10,50,0.5)]',
                 )}`}
@@ -296,8 +298,8 @@ export default function Hero() {
       </div>
 
       {/* Copy + CTAs */}
-      <div className="hero-copy relative z-20 container-x flex flex-col items-center text-center gap-space-md pb-space-lg">
-        <p className={`max-w-2xl ${t('text-body-xl text-on-surface-variant', 'text-[18px] leading-7 font-medium text-white/90')}`}>
+      <div className="hero-copy relative z-20 container-x flex flex-col items-center text-center gap-[var(--hero-gap)] pb-[var(--hero-gap)]">
+        <p className={`hero-lede max-w-2xl text-[length:var(--hero-lede)] leading-[1.5] ${t('text-on-surface-variant', 'font-medium text-white/90')}`}>
           Triple-kettle roasted heirloom masa infused with artisanal fire. Engineered at atomic precision for{' '}
           {t('ungodly crispness.', 'ungodly, feel-good crispness.')}
         </p>
@@ -305,7 +307,7 @@ export default function Hero() {
           <button
             type="button"
             onClick={() => addToCart(truffle.name, truffle.price)}
-            className={`group px-space-xl py-space-md rounded-full font-body text-label-lg uppercase tracking-wider font-extrabold flex items-center gap-space-xs transition-all duration-300 ${t(
+            className={`group px-space-lg sm:px-space-xl py-[var(--hero-btn-y)] rounded-full font-body text-label-lg uppercase tracking-wider font-extrabold flex items-center gap-space-xs transition-all duration-300 ${t(
               'bg-primary-container text-on-primary-container shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_32px_rgba(255,87,26,0.45)] hover:bg-primary hover:text-on-primary hover:scale-[1.03]',
               'bg-secondary-container text-black shadow-2xl border-2 border-yellow-200 hover:bg-white hover:scale-105',
             )}`}
@@ -315,7 +317,7 @@ export default function Hero() {
           </button>
           <a
             href="#arsenal"
-            className={`px-space-lg py-space-md rounded-full font-body text-label-lg uppercase tracking-wider font-extrabold flex items-center gap-space-xs transition-all ${t(
+            className={`px-space-lg py-[var(--hero-btn-y)] rounded-full font-body text-label-lg uppercase tracking-wider font-extrabold flex items-center gap-space-xs transition-all ${t(
               'bg-surface-container-highest text-on-surface hover:bg-on-surface hover:text-surface',
               'bg-white/20 backdrop-blur-md text-white border border-white/40 hover:bg-white hover:text-primary',
             )}`}
@@ -329,7 +331,7 @@ export default function Hero() {
       {/* Crunch meter */}
       <div className="container-x relative z-20">
         <div
-          className={`hero-meter w-full py-space-sm flex flex-col md:flex-row items-center justify-between gap-space-md px-space-lg ${t(
+          className={`hero-meter w-full py-[calc(var(--hero-gap)*0.6)] flex flex-col md:flex-row items-center justify-between gap-x-space-md gap-y-1 px-space-lg ${t(
             'bg-surface-container-low/70 backdrop-blur-xl rounded-[2rem] shadow-md',
             'bg-white/95 text-on-surface rounded-2xl shadow-xl border border-pink-200',
           )}`}
@@ -340,7 +342,7 @@ export default function Hero() {
               <span className="font-label text-label-sm uppercase text-on-surface font-extrabold tracking-wide">
                 Acoustic Crunch Frequency
               </span>
-              <span className="text-body-sm text-on-surface-variant">Measured via dual condenser mic lab tests at 24°C</span>
+              <span className="hero-meter-note text-body-sm text-on-surface-variant">Measured via dual condenser mic lab tests at 24°C</span>
             </div>
           </div>
           <div className="flex items-center gap-1.5 h-8" aria-hidden="true">

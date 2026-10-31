@@ -95,37 +95,46 @@ export default function Arsenal() {
   }, [landed]);
 
   // A flight runs between two fixed screen spots: where the source pack sits on screen when the flight
-  // starts, and where the target pack will sit when it ends. Both are on screen, so the pack never gets
-  // carried off with the section it is leaving. A smoothed proxy makes it glide after the scrollbar.
+  // starts, and where the target pack will sit when it ends, so the pack never gets carried off with the
+  // section it is leaving. Progress and both spots are measured live from the sections every frame (not
+  // from scroll offsets cached at load), so late layout shifts can't make the pack land in the wrong place.
+  // Progress is eased towards the scroll position each frame, so the pack glides instead of jumping.
   const stagePackRect = (aspect) => {
     const box = stageCol.current.firstElementChild.getBoundingClientRect();
     const h = box.height * PACK_FRACTION;
     const w = h * aspect;
     return { left: box.left + (box.width - w) / 2, top: box.top + (box.height - h) / 2, width: w, height: h };
   };
-  const placeFlyer = (plane, from, to, p, endRotation, st) => {
-    const sy = window.scrollY;
+  // travelled: px scrolled since the flight started; remaining: px still to scroll until it ends.
+  const placeFlyer = (plane, from, to, p, { travelled, remaining }, endRotation) => {
     const e = gsap.parseEase('power1.inOut')(p);
     gsap.set(plane, {
       x: lerp(from.left, to.left, e),
-      // Live rects → page positions → screen positions at the flight's start / end scroll.
-      y: lerp(from.top + sy - st.start, to.top + sy - st.end, e),
+      y: lerp(from.top + travelled, to.top - remaining, e),
       width: lerp(from.width, to.width, e),
       height: lerp(from.height, to.height, e),
       rotation: lerp(0, endRotation, e) + Math.sin(p * Math.PI) * -10,
       scale: 1 + Math.sin(p * Math.PI) * 0.1,
     });
   };
-  const scrubFlight = (scrollTrigger, render) => {
-    const proxy = { p: 0 };
-    render(0);
-    const tween = gsap.to(proxy, {
-      p: 1,
-      ease: 'none',
-      scrollTrigger: { ...scrollTrigger, scrub: 0.8 },
-      onUpdate: () => render(proxy.p, tween.scrollTrigger),
-    });
-    return tween;
+  // measure() → { travelled, remaining } in px; render(p, m) draws the flight at eased progress p.
+  const liveFlight = (measure, render) => {
+    let p = null;
+    let lastDrawn = -1;
+    const tick = () => {
+      const m = measure();
+      const total = m.travelled + m.remaining;
+      const target = total > 0 ? Math.min(1, Math.max(0, m.travelled / total)) : m.remaining > 0 ? 0 : 1;
+      p = p === null ? target : p + (target - p) * 0.16;
+      if (Math.abs(target - p) < 0.002) p = target;
+      // Idle at either end with nothing changing: skip the work.
+      if (p === lastDrawn && (p === 0 || p === 1)) return;
+      lastDrawn = p;
+      render(p, m);
+    };
+    gsap.ticker.add(tick);
+    tick();
+    return () => gsap.ticker.remove(tick);
   };
 
   // First flight: the hero pack travels from the hero down into the slider stage,
@@ -134,8 +143,9 @@ export default function Arsenal() {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const heroPack = document.querySelector('#top .hero-tilt');
+      const hero = document.getElementById('top');
       const plane = flyer.current;
-      if (!heroPack || !plane) {
+      if (!heroPack || !hero || !plane) {
         setLanded(true);
         return undefined;
       }
@@ -147,15 +157,23 @@ export default function Arsenal() {
         setLanded(on);
       };
 
-      scrubFlight({ trigger: '#top', start: 'top top', endTrigger: root.current, end: 'top top' }, (p, st) => {
-        const flying = p > 0.001 && p < 0.999;
-        heroPack.style.visibility = p > 0.001 ? 'hidden' : '';
-        plane.style.visibility = flying ? 'visible' : 'hidden';
-        setLand(p >= 0.999);
-        if (flying) placeFlyer(plane, heroPack.getBoundingClientRect(), stagePackRect(aspect), p, 0, st);
-      });
+      // Starts with the hero at the top of the screen, ends when the slider reaches the top.
+      const stop = liveFlight(
+        () => ({
+          travelled: Math.max(0, -hero.getBoundingClientRect().top),
+          remaining: Math.max(0, root.current.getBoundingClientRect().top),
+        }),
+        (p, m) => {
+          const flying = p > 0.001 && p < 0.999;
+          heroPack.style.visibility = p > 0.001 ? 'hidden' : '';
+          plane.style.visibility = flying ? 'visible' : 'hidden';
+          setLand(p >= 0.999);
+          if (flying) placeFlyer(plane, heroPack.getBoundingClientRect(), stagePackRect(aspect), p, m, 0);
+        },
+      );
 
       return () => {
+        stop();
         heroPack.style.visibility = '';
         plane.style.visibility = 'hidden';
         setLand(true);
@@ -190,26 +208,35 @@ export default function Arsenal() {
         return { left: col.left + (col.width - w) / 2, top: col.top + (col.height - h) / 2, width: w, height: h };
       };
 
-      scrubFlight({ trigger: lab, start: 'top 85%', end: 'top top' }, (p, st) => {
-        const flying = p > 0.001 && p < 0.999;
-        setDepart(p > 0.001);
-        labPacks().forEach((el) => {
-          el.style.visibility = p >= 0.999 ? '' : 'hidden';
-        });
-        plane.style.visibility = flying ? 'visible' : 'hidden';
-        if (!flying) return;
+      // Starts when the Lab's top reaches 85% down the screen, ends when it reaches the top.
+      const stop = liveFlight(
+        () => {
+          const top = lab.getBoundingClientRect().top;
+          const startLine = window.innerHeight * 0.85;
+          return { travelled: Math.max(0, startLine - Math.max(0, top)), remaining: Math.max(0, Math.min(top, startLine)) };
+        },
+        (p, m) => {
+          const flying = p > 0.001 && p < 0.999;
+          setDepart(p > 0.001);
+          labPacks().forEach((el) => {
+            el.style.visibility = p >= 0.999 ? '' : 'hidden';
+          });
+          plane.style.visibility = flying ? 'visible' : 'hidden';
+          if (!flying) return;
 
-        const i = indexRef.current;
-        const scene = SCENES[i];
-        window.dispatchEvent(new CustomEvent('cc:flavour', { detail: i }));
-        if (plane.dataset.src !== scene.pack) {
-          plane.dataset.src = scene.pack;
-          plane.src = scene.pack;
-        }
-        placeFlyer(plane, stagePackRect(scene.packAspect), labPackRect(flavors[i].id, scene.packAspect), p, -4, st);
-      });
+          const i = indexRef.current;
+          const scene = SCENES[i];
+          window.dispatchEvent(new CustomEvent('cc:flavour', { detail: i }));
+          if (plane.dataset.src !== scene.pack) {
+            plane.dataset.src = scene.pack;
+            plane.src = scene.pack;
+          }
+          placeFlyer(plane, stagePackRect(scene.packAspect), labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
+        },
+      );
 
       return () => {
+        stop();
         labPacks().forEach((el) => (el.style.visibility = ''));
         plane.style.visibility = 'hidden';
         setDepart(false);

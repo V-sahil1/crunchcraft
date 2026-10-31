@@ -190,10 +190,10 @@
 /* Flavour Lab type + spacing. Phones/tablets scale with width; laptops/desktops scale with the
    smaller of width and height, so the split always fits one screen (even short 1366x635 laptops). */
 .lab {
-  --lab-title: clamp(28px, 7.4vw, 46px);
-  --lab-name: clamp(24px, 6.6vw, 42px);
-  --lab-desc: clamp(14px, 3.7vw, 17px);
-  --lab-value: clamp(16px, 4.4vw, 24px);
+  --lab-title: clamp(26px, 7.6vw, 46px);
+  --lab-name: clamp(22px, 6.4vw, 42px);
+  --lab-desc: clamp(14px, 3.75vw, 17px);
+  --lab-value: clamp(15px, 4.3vw, 24px);
   --lab-pad: clamp(12px, 3vw, 20px);
   --lab-gap: clamp(16px, 4vw, 28px);
 }
@@ -211,6 +211,35 @@
 /* Short laptop screens: drop the metric captions so the button stays on screen. */
 @media (min-width: 1024px) and (max-height: 760px) {
   .lab .lab-caption {
+    display: none;
+  }
+}
+
+/* Hero: one screen tall on every device. Sizes come off the screen height (svh) so short laptops,
+   tall phones and big monitors all show the pack, copy, buttons and crunch meter without scrolling. */
+.hero-fit {
+  --hero-top: max(76px, 10svh);
+  --hero-bottom: max(44px, 6svh);
+  --hero-pack: clamp(190px, 36svh, 600px);
+  --hero-type: clamp(4rem, min(15vw, 20svh), 15rem);
+  --hero-lede: clamp(14px, 2.1svh, 19px);
+  --hero-gap: clamp(8px, 1.8svh, 20px);
+  --hero-btn-y: clamp(10px, 1.7svh, 16px);
+}
+@media (min-width: 1024px) {
+  .hero-fit {
+    --hero-pack: clamp(220px, 44svh, 640px);
+  }
+}
+/* Short screens: drop the secondary lines so the essentials keep their size. */
+@media (max-height: 760px) {
+  .hero-fit .hero-meter-note,
+  .hero-fit .hero-rating {
+    display: none;
+  }
+}
+@media (max-height: 680px) and (max-width: 1023px) {
+  .hero-fit .hero-lede {
     display: none;
   }
 }

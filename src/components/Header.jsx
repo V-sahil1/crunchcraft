@@ -101,11 +101,8 @@ export default function Header() {
         className="sticky top-0 left-0 w-full z-50 text-white bg-transparent"
       >
         <div
-          className={`w-full container-x flex items-center justify-between gap-space-sm sm:gap-space-md transition-[height,background-color] duration-300 ${
+          className={`w-full container-x flex items-center justify-between gap-space-sm sm:gap-space-md transition-[height] duration-300 ${
             scrolled ? 'h-16' : 'h-20'
-          } ${
-            // Below xl there is no pill nav to float on, so give the bar a glass backing once content scrolls beneath it.
-            pastHero ? 'max-xl:bg-surface/85 max-xl:backdrop-blur-xl max-xl:shadow-[0_8px_24px_-12px_rgb(0_0_0/0.45)]' : ''
           }`}
         >
           {/* Wordmark: chunky italic, stickered like snack packaging */}

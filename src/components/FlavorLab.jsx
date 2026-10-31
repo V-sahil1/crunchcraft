@@ -33,8 +33,12 @@ function Bar({ pct, className }) {
   );
 }
 
-// Ingredient callouts pinned over the full-bleed photo.
-const labTagPositions = ['top-[14%] left-4 lg:left-[12%]', 'top-1/2 right-4 lg:right-[10%]', 'bottom-[12%] left-6 lg:left-[16%]'];
+// Ingredient callouts orbiting the pack; on small screens they hug it instead of the screen edges.
+const labTagPositions = [
+  'top-[18%] left-3 sm:left-[14%] lg:top-[14%] lg:left-[12%]',
+  'top-[50%] right-3 sm:right-[14%] lg:top-1/2 lg:right-[10%]',
+  'bottom-[6%] left-5 sm:left-[18%] lg:bottom-[12%] lg:left-[16%]',
+];
 
 export default function FlavorLab() {
   const { isDark, t } = useTheme();
@@ -62,7 +66,7 @@ export default function FlavorLab() {
       )}`}
     >
       {/* Product side: just the cut-out pack, cross-fading per flavour over a soft flavour glow */}
-      <div className="relative order-1 h-[min(52svh,120vw)] sm:h-[min(48svh,80vw)] lg:h-auto pt-20 lg:pt-20 flex overflow-hidden">
+      <div className="relative order-1 h-[min(64svh,125vw)] sm:h-[min(56svh,78vw)] lg:h-auto pt-16 lg:pt-20 flex flex-col overflow-hidden">
         <div className="relative flex-1 flex items-center justify-center">
         <div
           aria-hidden="true"
@@ -76,7 +80,7 @@ export default function FlavorLab() {
             data-id={fl.id}
             alt={i === idx ? `${fl.name} pouch` : ''}
             aria-hidden={i === idx ? undefined : 'true'}
-            className={`lab-pack absolute h-[86%] lg:h-[min(80%,78svh)] w-auto max-w-[80%] object-contain transition-all duration-700 ease-out ${t(
+            className={`lab-pack absolute z-10 h-[86%] lg:h-[min(80%,78svh)] w-auto max-w-[80%] object-contain transition-all duration-700 ease-out ${t(
               'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
               'drop-shadow-[0_36px_48px_rgba(110,10,60,0.35)]',
             )} ${i === idx ? 'opacity-100 translate-y-0 rotate-[-4deg] scale-100' : 'opacity-0 translate-y-10 rotate-6 scale-90'}`}
@@ -85,7 +89,8 @@ export default function FlavorLab() {
         {f.tags.map((tag, i) => (
           <div
             key={`${f.id}-${tag}`}
-            className={`absolute z-20 px-3 sm:px-space-md py-1 sm:py-1.5 rounded-full shadow-lg font-label text-label-sm font-bold whitespace-nowrap animate-reveal ${labTagPositions[i]} ${tagColors[i]} ${t(
+            // z-[35] keeps the callouts above the seam crumbs (z-30) drifting in from the neighbouring sections.
+            className={`absolute z-[35] hidden sm:block px-space-md py-1.5 rounded-full shadow-lg font-label text-label-sm font-bold whitespace-nowrap animate-reveal ${labTagPositions[i]} ${tagColors[i]} ${t(
               'bg-surface-container-highest/90 backdrop-blur-md',
               'bg-white border font-black',
             )}`}
@@ -95,10 +100,25 @@ export default function FlavorLab() {
           </div>
         ))}
         </div>
+        {/* Phones: the callouts sit in a tidy row under the pack instead of on top of it. */}
+        <ul aria-label="Key ingredients" className="sm:hidden relative z-[35] flex flex-wrap justify-center gap-1.5 px-space-md pt-1 pb-2">
+          {f.tags.map((tag, i) => (
+            <li
+              key={`${f.id}-m-${tag}`}
+              className={`px-2.5 py-1 rounded-full shadow-sm font-label text-[10px] leading-tight font-bold whitespace-nowrap animate-reveal ${tagColors[i]} ${t(
+                'bg-surface-container-highest/90',
+                'bg-white border font-black',
+              )}`}
+              style={{ animationDelay: `${0.2 + i * 0.1}s` }}
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Copy side */}
-      <div className="relative order-2 flex flex-col justify-center gap-[var(--lab-gap)] container-x lg:pl-space-xl pt-space-md lg:pt-[max(84px,11vh)] pb-space-xl lg:pb-[max(20px,4vh)]">
+      <div className="relative order-2 flex flex-col justify-center gap-[var(--lab-gap)] container-x lg:pl-space-xl pt-space-sm lg:pt-[max(84px,11vh)] pb-20 sm:pb-24 lg:pb-[max(56px,8vh)]">
         <div
           aria-hidden="true"
           className="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full blur-3xl transition-colors duration-700 pointer-events-none"
@@ -115,7 +135,7 @@ export default function FlavorLab() {
           <div
             role="tablist"
             aria-label="Flavour profiles"
-            className={`self-start flex items-center gap-space-xs p-1.5 rounded-full max-w-full overflow-x-auto ${t(
+            className={`self-stretch sm:self-start flex items-center gap-space-xs p-1.5 rounded-full max-w-full overflow-x-auto ${t(
               'bg-surface-container',
               'bg-white shadow-sm border border-purple-200',
             )}`}
@@ -127,7 +147,7 @@ export default function FlavorLab() {
                 role="tab"
                 aria-selected={i === idx}
                 onClick={() => setIdx(i)}
-                className={`px-3 min-[400px]:px-space-md sm:px-space-lg py-1.5 lg:py-2 rounded-full font-label text-label-sm uppercase font-bold tracking-wider whitespace-nowrap transition-all ${
+                className={`flex-1 sm:flex-none px-2 min-[400px]:px-space-md sm:px-space-lg py-2.5 lg:py-2 rounded-full font-label text-label-sm uppercase font-bold tracking-wider whitespace-nowrap transition-all ${
                   i === idx
                     ? t('bg-primary-container text-on-primary-container', 'bg-primary text-white shadow-sm font-black')
                     : 'text-on-surface-variant hover:text-primary'
@@ -139,10 +159,10 @@ export default function FlavorLab() {
           </div>
         </div>
 
-        <div role="tabpanel" key={f.id} className="relative z-10 flex flex-col gap-[calc(var(--lab-gap)*0.7)] animate-reveal">
+        <div role="tabpanel" key={f.id} className="relative z-[35] flex flex-col gap-[calc(var(--lab-gap)*0.7)] animate-reveal">
             <div className="flex flex-wrap items-center gap-space-xs">
               <span
-                className={`px-space-md py-1 rounded-full font-label text-label-sm font-bold uppercase ${t(
+                className={`px-3 sm:px-space-md py-1 rounded-full font-label text-label-sm font-bold uppercase ${t(
                   'bg-surface-container-high text-primary',
                   'bg-primary-fixed text-primary font-extrabold',
                 )}`}
@@ -173,10 +193,10 @@ export default function FlavorLab() {
                 <Bar pct={f.db.pct} className={t('bg-tertiary', 'bg-[#10b981]')} />
               </Metric>
               <Metric label="Cut Architecture" value={f.cut} valueClass={t('text-secondary', 'text-[#b45309]')}>
-                <span className="lab-caption text-body-sm text-on-surface-variant">Max seasoning surface area</span>
+                <span className="lab-caption max-sm:hidden text-body-sm text-on-surface-variant">Max seasoning surface area</span>
               </Metric>
               <Metric label="Roast Technique" value={f.roast} valueClass="text-on-surface">
-                <span className="lab-caption text-body-sm text-on-surface-variant">Non-GMO Avocado Oil bath</span>
+                <span className="lab-caption max-sm:hidden text-body-sm text-on-surface-variant">Non-GMO Avocado Oil bath</span>
               </Metric>
             </div>
 
@@ -184,13 +204,15 @@ export default function FlavorLab() {
               <button
                 type="button"
                 onClick={() => addToCart(f.name, f.price)}
-                className={`w-full sm:w-auto justify-center px-space-lg sm:px-space-xl py-[clamp(12px,1.9vh,18px)] rounded-full font-label text-label-lg uppercase font-bold tracking-wider hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-space-xs ${t(
+                className={`w-full sm:w-auto justify-center whitespace-nowrap px-space-lg sm:px-space-xl py-[clamp(14px,1.9vh,18px)] rounded-full font-label text-label-lg uppercase font-bold tracking-wider hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-space-xs ${t(
                   'bg-primary-container text-on-primary-container',
                   'bg-secondary-container text-black hover:bg-[#ffbe1a] border-2 border-yellow-200 font-black',
                 )}`}
               >
                 <Icon name="bolt" className="text-[20px]" />
-                <span>Add to Crunch Crate — {formatPrice(f.price)}</span>
+                <span>
+                  Add to <span className="hidden min-[420px]:inline">Crunch </span>Crate — {formatPrice(f.price)}
+                </span>
               </button>
             </div>
         </div>
