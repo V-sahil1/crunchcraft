@@ -1,0 +1,364 @@
+{
+ "chili": {
+  "pack": "/images/slides/chili/pack.webp",
+  "packAspect": 0.72,
+  "dust": {
+   "src": "/images/slides/chili/dust.webp",
+   "w": 0.788,
+   "h": 1.016
+  },
+  "pieces": [
+   {
+    "src": "/images/slides/chili/piece-0.webp",
+    "x": 0.226,
+    "y": -0.291,
+    "w": 0.302,
+    "h": 0.331
+   },
+   {
+    "src": "/images/slides/chili/piece-1.webp",
+    "x": -0.185,
+    "y": -0.286,
+    "w": 0.358,
+    "h": 0.386
+   },
+   {
+    "src": "/images/slides/chili/piece-2.webp",
+    "x": 0.201,
+    "y": 0.018,
+    "w": 0.297,
+    "h": 0.364
+   },
+   {
+    "src": "/images/slides/chili/piece-3.webp",
+    "x": -0.136,
+    "y": -0.162,
+    "w": 0.244,
+    "h": 0.22
+   },
+   {
+    "src": "/images/slides/chili/piece-4.webp",
+    "x": 0.021,
+    "y": 0.367,
+    "w": 0.253,
+    "h": 0.224
+   },
+   {
+    "src": "/images/slides/chili/piece-5.webp",
+    "x": -0.258,
+    "y": 0.148,
+    "w": 0.237,
+    "h": 0.194
+   },
+   {
+    "src": "/images/slides/chili/piece-6.webp",
+    "x": -0.088,
+    "y": 0.04,
+    "w": 0.225,
+    "h": 0.103
+   },
+   {
+    "src": "/images/slides/chili/piece-7.webp",
+    "x": 0.222,
+    "y": 0.374,
+    "w": 0.167,
+    "h": 0.163
+   },
+   {
+    "src": "/images/slides/chili/piece-8.webp",
+    "x": -0.029,
+    "y": 0.144,
+    "w": 0.126,
+    "h": 0.125
+   },
+   {
+    "src": "/images/slides/chili/piece-9.webp",
+    "x": 0.009,
+    "y": -0.208,
+    "w": 0.119,
+    "h": 0.119
+   },
+   {
+    "src": "/images/slides/chili/piece-10.webp",
+    "x": -0.244,
+    "y": -0.039,
+    "w": 0.136,
+    "h": 0.108
+   },
+   {
+    "src": "/images/slides/chili/piece-11.webp",
+    "x": 0.19,
+    "y": 0.178,
+    "w": 0.141,
+    "h": 0.113
+   },
+   {
+    "src": "/images/slides/chili/piece-12.webp",
+    "x": 0.052,
+    "y": -0.374,
+    "w": 0.108,
+    "h": 0.097
+   },
+   {
+    "src": "/images/slides/chili/piece-13.webp",
+    "x": 0.317,
+    "y": 0.038,
+    "w": 0.09,
+    "h": 0.087
+   },
+   {
+    "src": "/images/slides/chili/piece-14.webp",
+    "x": -0.198,
+    "y": 0.25,
+    "w": 0.086,
+    "h": 0.08
+   },
+   {
+    "src": "/images/slides/chili/piece-15.webp",
+    "x": -0.34,
+    "y": -0.253,
+    "w": 0.073,
+    "h": 0.08
+   },
+   {
+    "src": "/images/slides/chili/piece-16.webp",
+    "x": 0.323,
+    "y": 0.301,
+    "w": 0.075,
+    "h": 0.07
+   }
+  ]
+ },
+ "jalapeno": {
+  "pack": "/images/slides/jalapeno/pack.webp",
+  "packAspect": 0.75,
+  "dust": {
+   "src": "/images/slides/jalapeno/dust.webp",
+   "w": 1.234,
+   "h": 1.041
+  },
+  "pieces": [
+   {
+    "src": "/images/slides/jalapeno/piece-0.webp",
+    "x": 0.336,
+    "y": -0.367,
+    "w": 0.261,
+    "h": 0.291
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-1.webp",
+    "x": 0.076,
+    "y": -0.37,
+    "w": 0.271,
+    "h": 0.188
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-2.webp",
+    "x": 0.123,
+    "y": 0.287,
+    "w": 0.215,
+    "h": 0.205
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-3.webp",
+    "x": -0.365,
+    "y": -0.295,
+    "w": 0.259,
+    "h": 0.196
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-4.webp",
+    "x": 0.339,
+    "y": 0.211,
+    "w": 0.216,
+    "h": 0.242
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-5.webp",
+    "x": -0.176,
+    "y": -0.229,
+    "w": 0.238,
+    "h": 0.197
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-6.webp",
+    "x": -0.379,
+    "y": 0.11,
+    "w": 0.27,
+    "h": 0.147
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-7.webp",
+    "x": 0.388,
+    "y": -0.119,
+    "w": 0.21,
+    "h": 0.2
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-8.webp",
+    "x": 0.315,
+    "y": 0.432,
+    "w": 0.174,
+    "h": 0.162
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-9.webp",
+    "x": -0.047,
+    "y": 0.411,
+    "w": 0.177,
+    "h": 0.169
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-10.webp",
+    "x": -0.238,
+    "y": 0.376,
+    "w": 0.183,
+    "h": 0.168
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-11.webp",
+    "x": -0.16,
+    "y": 0.216,
+    "w": 0.191,
+    "h": 0.134
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-12.webp",
+    "x": -0.25,
+    "y": -0.407,
+    "w": 0.184,
+    "h": 0.154
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-13.webp",
+    "x": -0.284,
+    "y": -0.019,
+    "w": 0.144,
+    "h": 0.141
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-14.webp",
+    "x": 0.411,
+    "y": 0.038,
+    "w": 0.246,
+    "h": 0.155
+   },
+   {
+    "src": "/images/slides/jalapeno/piece-15.webp",
+    "x": -0.484,
+    "y": -0.102,
+    "w": 0.102,
+    "h": 0.083
+   }
+  ]
+ },
+ "truffle": {
+  "pack": "/images/slides/truffle/pack-noble.webp",
+  "packAspect": 0.757,
+  "dust": {
+   "src": "/images/slides/truffle/dust.webp",
+   "w": 1.14,
+   "h": 1.036
+  },
+  "pieces": [
+   {
+    "src": "/images/slides/truffle/piece-0.webp",
+    "x": -0.093,
+    "y": -0.306,
+    "w": 0.507,
+    "h": 0.381
+   },
+   {
+    "src": "/images/slides/truffle/piece-1.webp",
+    "x": 0.363,
+    "y": -0.041,
+    "w": 0.277,
+    "h": 0.318
+   },
+   {
+    "src": "/images/slides/truffle/piece-2.webp",
+    "x": -0.273,
+    "y": -0.015,
+    "w": 0.216,
+    "h": 0.207
+   },
+   {
+    "src": "/images/slides/truffle/piece-3.webp",
+    "x": 0.101,
+    "y": 0.28,
+    "w": 0.234,
+    "h": 0.189
+   },
+   {
+    "src": "/images/slides/truffle/piece-4.webp",
+    "x": -0.227,
+    "y": 0.267,
+    "w": 0.246,
+    "h": 0.221
+   },
+   {
+    "src": "/images/slides/truffle/piece-5.webp",
+    "x": 0.263,
+    "y": -0.172,
+    "w": 0.25,
+    "h": 0.155
+   },
+   {
+    "src": "/images/slides/truffle/piece-6.webp",
+    "x": 0.28,
+    "y": -0.324,
+    "w": 0.172,
+    "h": 0.162
+   },
+   {
+    "src": "/images/slides/truffle/piece-7.webp",
+    "x": 0.202,
+    "y": 0.173,
+    "w": 0.221,
+    "h": 0.162
+   },
+   {
+    "src": "/images/slides/truffle/piece-8.webp",
+    "x": -0.176,
+    "y": 0.114,
+    "w": 0.145,
+    "h": 0.144
+   },
+   {
+    "src": "/images/slides/truffle/piece-9.webp",
+    "x": -0.071,
+    "y": 0.426,
+    "w": 0.151,
+    "h": 0.141
+   },
+   {
+    "src": "/images/slides/truffle/piece-10.webp",
+    "x": -0.043,
+    "y": 0.191,
+    "w": 0.164,
+    "h": 0.151
+   },
+   {
+    "src": "/images/slides/truffle/piece-11.webp",
+    "x": 0.408,
+    "y": 0.23,
+    "w": 0.133,
+    "h": 0.15
+   },
+   {
+    "src": "/images/slides/truffle/piece-12.webp",
+    "x": -0.426,
+    "y": 0.129,
+    "w": 0.151,
+    "h": 0.119
+   },
+   {
+    "src": "/images/slides/truffle/piece-13.webp",
+    "x": -0.42,
+    "y": -0.132,
+    "w": 0.133,
+    "h": 0.117
+   }
+  ]
+ }
+}

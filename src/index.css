@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-surface font-body text-body-md text-on-surface antialiased;
+    overscroll-behavior: none;
+    transition: background-color 0.4s ease;
+  }
+  /* Archivo Black ships a single heavy weight; never let the browser fake a bolder one. */
+  .font-display {
+    font-synthesis: none;
+  }
+  ::selection {
+    @apply bg-tertiary text-on-tertiary;
+  }
+}
+
+@layer components {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    line-height: 1;
+    user-select: none;
+  }
+  .icon-fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .container-x {
+    @apply px-space-md lg:px-margin;
+  }
+  .cc-wordmark {
+    color: #ffd400;
+    -webkit-text-stroke: 5px #1b110c;
+    paint-order: stroke fill;
+    letter-spacing: -0.03em;
+    text-shadow: 0 3px 0 #1b110c;
+  }
+  .cc-wordmark-accent {
+    color: #ffffff;
+    margin-left: 0.12em;
+  }
+  /* Nav controls float on a fully transparent bar: light glass over the hero, dark glass over light sections. */
+  .nav-glass {
+    background-color: rgb(255 255 255 / 0.2);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.3);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  header[data-past-hero] .nav-glass {
+    background-color: rgb(27 17 12 / 0.62);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12), 0 8px 24px -8px rgb(0 0 0 / 0.4);
+  }
+  .hero-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(var(--c-primary-container) / 0.85);
+  }
+  [data-theme='light'] .hero-outline {
+    -webkit-text-stroke-color: rgb(255 255 255 / 0.85);
+  }
+  .dot-grid {
+    background-image: radial-gradient(#ffffff 2px, transparent 2px);
+  }
+  /* Soft-fade all four edges of the WebGL stage so drifting pieces never hit a hard canvas edge. */
+  .stage-fade {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+      linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+      linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+    mask-composite: intersect;
+  }
+  /* Zesty lime halftone: flat lime with a yellow-lime dot screen that fades out toward the centre. */
+  .bg-zesty-lime {
+    background-color: #8cc63f;
+  }
+  .bg-zesty-lime::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, #d8f000 1.3px, transparent 1.7px),
+      radial-gradient(circle, #c6ec00 1.1px, transparent 1.5px);
+    background-size: 6px 6px, 6px 6px;
+    background-position: 0 0, 3px 3px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 85% at 50% 50%, transparent 30%, rgb(0 0 0 / 0.55) 62%, #000 95%);
+    mask-image: radial-gradient(ellipse 75% 85% at 50% 50%, transparent 30%, rgb(0 0 0 / 0.55) 62%, #000 95%);
+  }
+  /* Dark Truffle studio backdrop (from pack-truffle.jpg): golden bokeh over warm black, slate floor. */
+  .bg-truffle-bokeh {
+    background-color: #0e0906;
+    background-image:
+      radial-gradient(circle at 7% 22%, rgb(255 196 110 / 0.55) 0 2.2%, transparent 2.6%),
+      radial-gradient(circle at 17% 10%, rgb(255 210 140 / 0.35) 0 1.4%, transparent 1.8%),
+      radial-gradient(circle at 28% 34%, rgb(255 180 90 / 0.22) 0 3%, transparent 3.6%),
+      radial-gradient(circle at 4% 52%, rgb(255 170 80 / 0.3) 0 1.8%, transparent 2.3%),
+      radial-gradient(circle at 44% 8%, rgb(255 200 120 / 0.25) 0 1.2%, transparent 1.6%),
+      radial-gradient(circle at 92% 14%, rgb(255 190 110 / 0.35) 0 1.6%, transparent 2%),
+      radial-gradient(circle at 96% 30%, rgb(255 170 90 / 0.45) 0 2.4%, transparent 2.9%),
+      radial-gradient(circle at 84% 46%, rgb(255 200 130 / 0.18) 0 3.2%, transparent 3.8%),
+      radial-gradient(circle at 70% 6%, rgb(255 215 150 / 0.2) 0 1%, transparent 1.4%),
+      radial-gradient(ellipse 55% 60% at 12% 18%, rgb(214 140 60 / 0.42), transparent 70%),
+      radial-gradient(ellipse 45% 50% at 90% 20%, rgb(180 110 50 / 0.28), transparent 70%),
+      radial-gradient(ellipse 60% 45% at 62% 55%, rgb(120 80 40 / 0.25), transparent 75%),
+      linear-gradient(to bottom, transparent 68%, rgb(30 30 32 / 0.85) 82%, #121214 100%),
+      linear-gradient(160deg, #2a1a0f 0%, #140c07 45%, #0b0705 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Brand type scale, mobile steps: body 15px, buttons 14px, small labels 10px. */
+@layer utilities {
+  @media (max-width: 639px) {
+    .text-body-lg {
+      font-size: 15px;
+      line-height: 23px;
+    }
+    .text-label-lg {
+      font-size: 14px;
+    }
+    .text-label-sm {
+      font-size: 10px;
+    }
+  }
+}
+
+/* Flat (no-WebGL) product stage: pieces burst out from the pack, then bob. */
+.stage-pop {
+  animation: stage-pop 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes stage-pop {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.3);
+  }
+}
+.stage-bob {
+  animation: stage-bob 5s ease-in-out infinite;
+}
+@keyframes stage-bob {
+  50% {
+    transform: translateY(-6%);
+  }
+}
+/* Flat stage flavour switch: the new pack slides in from the arrow's side, the old one leaves the other way. */
+.stage-enter {
+  animation: stage-enter 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes stage-enter {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * 65%)) rotate(calc(var(--dir, 1) * 8deg));
+  }
+}
+.stage-leave {
+  animation: stage-leave 0.7s cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+@keyframes stage-leave {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * -65%)) rotate(calc(var(--dir, 1) * -8deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-enter,
+  .stage-leave,
+  .stage-pop,
+  .stage-bob {
+    animation: none;
+  }
+}
+
+/* Flavour Lab type + spacing. Phones/tablets scale with width; laptops/desktops scale with the
+   smaller of width and height, so the split always fits one screen (even short 1366x635 laptops). */
+.lab {
+  --lab-title: clamp(28px, 7.4vw, 46px);
+  --lab-name: clamp(24px, 6.6vw, 42px);
+  --lab-desc: clamp(14px, 3.7vw, 17px);
+  --lab-value: clamp(16px, 4.4vw, 24px);
+  --lab-pad: clamp(12px, 3vw, 20px);
+  --lab-gap: clamp(16px, 4vw, 28px);
+}
+@media (min-width: 1024px) {
+  .lab {
+    --u: min(1vw, 1.75vh);
+    --lab-title: clamp(26px, calc(var(--u) * 3.2), 54px);
+    --lab-name: clamp(22px, calc(var(--u) * 2.85), 48px);
+    --lab-desc: clamp(13px, calc(var(--u) * 1.22), 18px);
+    --lab-value: clamp(15px, calc(var(--u) * 1.7), 26px);
+    --lab-pad: clamp(10px, calc(var(--u) * 1.15), 22px);
+    --lab-gap: clamp(12px, calc(var(--u) * 2), 34px);
+  }
+}
+/* Short laptop screens: drop the metric captions so the button stays on screen. */
+@media (min-width: 1024px) and (max-height: 760px) {
+  .lab .lab-caption {
+    display: none;
+  }
+}
