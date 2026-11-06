@@ -11,7 +11,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 // Background-free pack cut-outs from public/images, in the same order as the flavour tabs.
 const heroPacks = [
-  { id: 'chili', src: '/images/row-1-column-1__2_-removebg-preview.png', alt: 'Fiery Chili & Smoked Cheddar pouch' },
+  { id: 'chili', src: '/images/slides/chili/pack-clean.webp', alt: 'Fiery Chili & Smoked Cheddar pouch' },
   { id: 'jalapeno', src: '/images/slides/jalapeno/pack.webp', alt: 'Smoky Jalapeño & Lime Crunch pouch' },
   { id: 'truffle', src: '/images/slides/truffle/pack-noble.webp', alt: 'Dark Truffle & Roasted Garlic crisps pouch' },
 ];

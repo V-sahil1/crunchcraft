@@ -109,12 +109,12 @@ export default function Manifesto() {
           'from-[#f4eaff] via-[#f8eef4]',
         )}`}
       />
-      {/* …and the cream melts into the Ingredients section's lilac below. */}
+      {/* …and melts into the Ingredients section below. */}
       <div
         aria-hidden="true"
         className={`absolute inset-x-0 bottom-0 h-32 sm:h-44 pointer-events-none bg-gradient-to-t to-transparent ${t(
           'from-surface-container-low',
-          'from-[#f9f0ff]',
+          'from-[#fdf4ec]',
         )}`}
       />
 

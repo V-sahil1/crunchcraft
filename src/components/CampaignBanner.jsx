@@ -9,7 +9,7 @@ const packs = ['jalapeno', 'chili', 'truffle'].map((id) => flavors.find((fl) => 
 // Background-free pack cut-outs from public/images (the same ones the Arsenal slider uses).
 const packImg = {
   jalapeno: '/images/slides/jalapeno/pack.webp',
-  chili: '/images/row-1-column-1__2_-removebg-preview.png',
+  chili: '/images/slides/chili/pack-clean.webp',
   truffle: '/images/slides/truffle/pack-noble.webp',
 };
 

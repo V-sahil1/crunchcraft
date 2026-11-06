@@ -72,11 +72,15 @@ export default function FlavorLab() {
       {/* On desktop the bottom is feathered so the flavour glow fades out instead of ending on the column's hard edge. */}
       <div className="relative order-1 h-[min(64svh,125vw)] sm:h-[min(56svh,78vw)] lg:h-auto pt-16 lg:pt-20 flex flex-col overflow-hidden lg:[mask-image:linear-gradient(to_bottom,#000_80%,transparent)]">
         <div className="relative flex-1 flex items-center justify-center">
-        <div
-          aria-hidden="true"
-          className="absolute w-[80%] max-w-[640px] aspect-square rounded-full blur-3xl opacity-70 transition-colors duration-700"
-          style={{ backgroundColor: s.labGlow }}
-        />
+        {/* Dark theme only: on the light lilac the tinted glow muddied into a grey patch behind the pack. */}
+        {t(
+          <div
+            aria-hidden="true"
+            className="absolute w-[80%] max-w-[640px] aspect-square rounded-full blur-3xl opacity-70 transition-colors duration-700"
+            style={{ backgroundColor: s.labGlow }}
+          />,
+          null,
+        )}
         {flavors.map((fl, i) => (
           <img
             key={fl.id}
@@ -123,11 +127,15 @@ export default function FlavorLab() {
 
       {/* Copy side */}
       <div className="relative order-2 flex flex-col justify-center gap-[var(--lab-gap)] container-x lg:pl-space-xl pt-space-sm lg:pt-[max(84px,11vh)] pb-20 sm:pb-24 lg:pb-[max(56px,8vh)]">
-        <div
-          aria-hidden="true"
-          className="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full blur-3xl transition-colors duration-700 pointer-events-none"
-          style={{ backgroundColor: s.labGlow }}
-        />
+        {t(
+          <div
+            aria-hidden="true"
+            // Kept clear of the section's top edge, which would otherwise slice the glow into a hard line at the seam.
+            className="absolute top-24 -right-32 w-[28rem] h-[28rem] rounded-full blur-3xl transition-colors duration-700 pointer-events-none"
+            style={{ backgroundColor: s.labGlow }}
+          />,
+          null,
+        )}
 
         <div className="relative flex flex-col gap-[calc(var(--lab-gap)*0.7)]">
           <SectionHeading

@@ -51,11 +51,52 @@ function chipGeometry(w, h, curl) {
 }
 
 /**
+ * A leaf drawn on a canvas (there is no leaf photo): a two-tone green blade with a pale midrib and side veins.
+ * Mapped onto the same curled geometry as the chips, it reads as a real, lit leaf drifting past.
+ */
+function leafTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 150;
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 256, 150);
+  g.addColorStop(0, '#86c84a');
+  g.addColorStop(1, '#2f6e22');
+  x.fillStyle = g;
+  x.beginPath();
+  x.moveTo(6, 75);
+  x.bezierCurveTo(70, -8, 196, 2, 252, 75);
+  x.bezierCurveTo(196, 150, 70, 160, 6, 75);
+  x.fill();
+  x.strokeStyle = 'rgba(225, 255, 200, 0.55)';
+  x.lineWidth = 3;
+  x.beginPath();
+  x.moveTo(8, 75);
+  x.quadraticCurveTo(130, 70, 248, 75);
+  x.stroke();
+  x.lineWidth = 1.4;
+  for (let i = 1; i < 6; i++) {
+    const px = 18 + i * 36;
+    x.beginPath();
+    x.moveTo(px, 74);
+    x.quadraticCurveTo(px + 16, 56, px + 32, 34);
+    x.moveTo(px, 76);
+    x.quadraticCurveTo(px + 16, 94, px + 32, 116);
+    x.stroke();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/**
  * The Manifesto's floating chips, rendered with three.js: lit, curved chips at different depths that tumble
  * slowly, sway with the pointer (near ones more than far ones) and drift with scroll. Everything is sharp: depth
  * comes from scale, lighting and parallax rather than blur. Falls back to plain images without WebGL.
+ * Other sections reuse it with their own `chips` layout (same shape as CHIPS; `leaf: true` draws a leaf instead
+ * of loading `src`) and `delays` (drop-in order).
  */
-export default function ManifestoChips3D({ className = '' }) {
+export default function ManifestoChips3D({ className = '', chips: layout = CHIPS, delays = DROP_DELAY }) {
   const mountRef = useRef(null);
   const [fallback, setFallback] = useState(() => !hasWebGL());
 
@@ -128,17 +169,17 @@ export default function ManifestoChips3D({ className = '' }) {
       }
     };
 
-    CHIPS.forEach((def, i) => {
+    layout.forEach((def, i) => {
       const entry = {
         def,
         base: new THREE.Vector3(),
         size: 1,
         phase: i * 1.7,
-        delay: DROP_DELAY[i] ?? 0,
+        delay: delays[i] ?? 0,
         t: reduceMotion ? 1 : 0,
         mesh: null,
       };
-      loader.load(def.src, (tex) => {
+      const onTexture = (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         const { width, height } = tex.image;
@@ -161,7 +202,9 @@ export default function ManifestoChips3D({ className = '' }) {
         chips.push(entry);
         scene.add(mesh);
         place();
-      });
+      };
+      if (def.leaf) onTexture(leafTexture());
+      else loader.load(def.src, onTexture);
     });
 
     const resize = () => {
@@ -260,7 +303,7 @@ export default function ManifestoChips3D({ className = '' }) {
     // Flat, still images in the same spots when WebGL isn't available.
     return (
       <div aria-hidden="true" className={`absolute inset-0 pointer-events-none ${className}`}>
-        {CHIPS.filter((c) => !c.anchor).map((c) => (
+        {layout.filter((c) => !c.anchor && !c.leaf).map((c) => (
           <img
             key={c.src + c.x}
             src={c.src}

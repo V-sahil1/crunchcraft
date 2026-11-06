@@ -290,7 +290,7 @@ export default function Arsenal() {
         src={SCENES[HERO_SLIDE].pack}
         alt=""
         aria-hidden="true"
-        className="fixed top-0 left-0 z-40 pointer-events-none drop-shadow-[0_40px_60px_rgba(0,0,0,0.6)] will-change-transform"
+        className="fixed top-0 left-0 z-40 pointer-events-none drop-shadow-[0_40px_60px_rgba(0,0,0,0.6)] [[data-theme=light]_&]:drop-shadow-[0_36px_48px_rgba(110,10,60,0.35)] will-change-transform"
         style={{ visibility: 'hidden' }}
       />
       {/* The current slider pack while it travels on down into the Flavour Lab. */}
@@ -299,7 +299,7 @@ export default function Arsenal() {
         src={SCENES[HERO_SLIDE].pack}
         alt=""
         aria-hidden="true"
-        className="fixed top-0 left-0 z-40 pointer-events-none drop-shadow-[0_40px_60px_rgba(0,0,0,0.6)] will-change-transform"
+        className="fixed top-0 left-0 z-40 pointer-events-none drop-shadow-[0_40px_60px_rgba(0,0,0,0.6)] [[data-theme=light]_&]:drop-shadow-[0_36px_48px_rgba(110,10,60,0.35)] will-change-transform"
         style={{ visibility: 'hidden' }}
       />
       <div
@@ -327,6 +327,23 @@ export default function Arsenal() {
           />
         ))}
         <div aria-hidden="true" className="absolute inset-0 opacity-10 dot-grid [background-size:26px_26px]" />
+        {/* Melts the flavour colour into the Flavour Lab's background below, so the two chapters read as one
+            continuous scene instead of meeting on a hard line. Sits under the controls (later siblings paint on top),
+            and the spacer at the end of the slider gives it room below them. */}
+        <div
+          aria-hidden="true"
+          className={`absolute inset-x-0 bottom-0 h-48 sm:h-56 lg:h-72 pointer-events-none transition-opacity duration-1000 ease-out bg-gradient-to-b from-transparent via-[rgb(var(--seam-to)/0.55)] to-[rgb(var(--seam-to))] [--seam-to:22_12_7] [[data-theme=light]_&]:[--seam-to:244_234_255] ${
+            f.id === 'truffle' ? '[[data-theme=light]_&]:opacity-0' : ''
+          }`}
+        />
+        {/* Truffle's near-black would fade into the light lilac through a dull grey, so in the light theme it takes a
+            dusk route instead: black → aubergine → plum → lavender → lilac, staying colourful all the way down. */}
+        <div
+          aria-hidden="true"
+          className={`hidden [[data-theme=light]_&]:block absolute inset-x-0 bottom-0 h-48 sm:h-56 lg:h-72 pointer-events-none transition-opacity duration-1000 ease-out bg-[linear-gradient(to_bottom,transparent_0%,rgb(36_16_34/0.85)_22%,#4a2353_42%,#8a5c9e_62%,#cfb3e8_82%,#f4eaff_100%)] ${
+            f.id === 'truffle' ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
         <div
           aria-hidden="true"
           className="absolute -left-40 top-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-white/10 blur-[110px]"
@@ -458,6 +475,9 @@ export default function Arsenal() {
             </button>
           </div>
         </div>
+
+        {/* Room for the colour to melt into the Lab below the controls (see the seam gradient above). */}
+        <div aria-hidden="true" className="h-36 sm:h-44 lg:h-56 shrink-0" />
       </div>
     </section>
   );
