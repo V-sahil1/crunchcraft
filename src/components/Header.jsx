@@ -107,8 +107,17 @@ export default function Header() {
         >
           {/* Wordmark: chunky italic, stickered like snack packaging */}
           <a href="#top" aria-label="Crunch Craft home" className="group shrink-0 min-w-0">
-            <span className="cc-wordmark inline-block font-display font-extrabold uppercase italic leading-none text-[18px] min-[360px]:text-[22px] sm:text-[28px] -rotate-6 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105">
-              Crunch<span className="cc-wordmark-accent">Craft</span>
+            <span className="cc-wordmark relative inline-block font-display font-extrabold uppercase italic leading-none text-[18px] min-[360px]:text-[22px] sm:text-[28px] -rotate-6 transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105">
+              {/* Two stacked copies: the thick dark outline is drawn on its own copy behind, and the clean
+                  yellow/white letters sit on top. (Relying on `paint-order` to put the stroke behind the fill
+                  doesn't work in many mobile browsers, which painted the stroke over the letters and turned the
+                  whole logo black.) */}
+              <span aria-hidden="true" className="cc-wordmark-outline absolute inset-0">
+                Crunch<span className="cc-wordmark-accent">Craft</span>
+              </span>
+              <span className="relative">
+                Crunch<span className="cc-wordmark-accent">Craft</span>
+              </span>
             </span>
           </a>
 

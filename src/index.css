@@ -35,14 +35,19 @@
   }
   .cc-wordmark {
     color: #ffd400;
-    -webkit-text-stroke: 5px #1b110c;
-    paint-order: stroke fill;
     letter-spacing: -0.03em;
-    text-shadow: 0 3px 0 #1b110c;
   }
   .cc-wordmark-accent {
     color: #ffffff;
     margin-left: 0.12em;
+  }
+  /* The outline lives on a copy *behind* the letters (see Header), so the fill always stays on top, whatever the
+     browser does with strokes. */
+  .cc-wordmark-outline,
+  .cc-wordmark-outline .cc-wordmark-accent {
+    color: #1b110c;
+    -webkit-text-stroke: 5px #1b110c;
+    text-shadow: 0 3px 0 #1b110c;
   }
   /* Nav controls float on a fully transparent bar: light glass over the hero, dark glass over light sections. */
   .nav-glass {
