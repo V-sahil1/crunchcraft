@@ -420,6 +420,24 @@ export default function Arsenal() {
                 className="stage-fade relative shrink-0 w-[118%] max-w-[min(118%,94svh)] -my-[6%] aspect-square"
               />
             </Suspense>
+            {/* Mobile: arrows flank the pack so it's obvious there are more flavours to swipe through.
+                They must stay after the stage: stagePackRect() measures the column's first child. */}
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label="Previous flavour"
+              className="lg:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/25 backdrop-blur-md ring-1 ring-inset ring-white/40 flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <Icon name="arrow_back" className="text-[22px]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label="Next flavour"
+              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white text-[#1b110c] shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <Icon name="arrow_forward" className="text-[22px]" />
+            </button>
           </div>
         </div>
 
@@ -461,7 +479,7 @@ export default function Arsenal() {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous flavour"
-              className="w-12 h-12 rounded-full bg-black/15 ring-1 ring-inset ring-white/30 flex items-center justify-center hover:bg-white hover:text-[#1b110c] hover:-translate-x-0.5 transition-all"
+              className="hidden lg:flex w-12 h-12 rounded-full bg-black/15 ring-1 ring-inset ring-white/30 items-center justify-center hover:bg-white hover:text-[#1b110c] hover:-translate-x-0.5 transition-all"
             >
               <Icon name="arrow_back" className="text-[22px]" />
             </button>
@@ -469,7 +487,7 @@ export default function Arsenal() {
               type="button"
               onClick={() => go(1)}
               aria-label="Next flavour"
-              className="w-12 h-12 rounded-full bg-white text-[#1b110c] flex items-center justify-center shadow-lg hover:scale-105 hover:translate-x-0.5 transition-all"
+              className="hidden lg:flex w-12 h-12 rounded-full bg-white text-[#1b110c] items-center justify-center shadow-lg hover:scale-105 hover:translate-x-0.5 transition-all"
             >
               <Icon name="arrow_forward" className="text-[22px]" />
             </button>

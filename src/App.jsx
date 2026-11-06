@@ -18,9 +18,9 @@ import SeamCrumbs, { SEAMS } from './components/SeamCrumbs.jsx';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-// Below-the-fold elements that fade up as they scroll into view. The Manifesto (#story) and Provenance (#ingredients) run their own scroll stories.
+// Below-the-fold elements that fade up as they scroll into view. The Manifesto (#story) and Provenance (#ingredients) run their own scroll stories; the phone review deck (.deck-card) animates itself.
 const REVEAL =
-  'main section:not(#top):not(#story):not(#ingredients) :is(h2, article, figure), main section:not(#top):not(#story):not(#ingredients) [role="tabpanel"]';
+  'main section:not(#top):not(#story):not(#ingredients) :is(h2, article, figure):not(.deck-card), main section:not(#top):not(#story):not(#ingredients) [role="tabpanel"]';
 
 export default function App() {
   const main = useRef(null);
