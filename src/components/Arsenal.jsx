@@ -38,6 +38,7 @@ export default function Arsenal() {
   const [departed, setDeparted] = useState(false);
   const departedRef = useRef(departed);
   const flyer2 = useRef(null);
+  const controls = useRef(null);
   const indexRef = useRef(index);
   const f = flavors[index];
   indexRef.current = index;
@@ -225,12 +226,25 @@ export default function Arsenal() {
         return { left: col.left + (col.width - w) / 2, top: col.top + (col.height - h) / 2, width: w, height: h };
       };
 
-      // Starts when the Lab's top reaches 85% down the screen, ends when it reaches the top.
+      // Below lg the stage sits above the copy, so by the time the Lab shows up the pack has long since scrolled
+      // up under the header. Flying it from there dragged it back down across the header and the copy, so on
+      // stacked layouts the flight waits until the copy has cleared, and the pack drops back out from under the
+      // header (where it was last seen) into the Lab.
+      const stacked = () => window.matchMedia('(max-width: 1023.98px)').matches;
+      const headerLine = () => document.querySelector('header')?.getBoundingClientRect().bottom ?? 64;
+
+      // Ends when the Lab's top reaches the top of the screen. Starts when it reaches 85% down the screen, or
+      // on stacked layouts, once the slider controls have slid up under the header.
+      const startLine = () => {
+        if (!stacked() || !controls.current) return window.innerHeight * 0.85;
+        const gap = lab.getBoundingClientRect().top - controls.current.getBoundingClientRect().top;
+        return Math.min(window.innerHeight * 0.85, headerLine() + gap);
+      };
       const stop = liveFlight(
         () => {
           const top = lab.getBoundingClientRect().top;
-          const startLine = window.innerHeight * 0.85;
-          return { travelled: Math.max(0, startLine - Math.max(0, top)), remaining: Math.max(0, Math.min(top, startLine)) };
+          const line = startLine();
+          return { travelled: Math.max(0, line - Math.max(0, top)), remaining: Math.max(0, Math.min(top, line)) };
         },
         (p, m) => {
           const flying = p > 0.001 && p < 0.999;
@@ -248,7 +262,11 @@ export default function Arsenal() {
             plane.dataset.src = scene.pack;
             plane.src = scene.pack;
           }
-          placeFlyer(plane, stagePackRect(scene.packAspect), labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
+          let from = stagePackRect(scene.packAspect);
+          // Stacked: the stage pack is far off the top by now; start it with just its bottom edge under the header.
+          // (placeFlyer adds `travelled` back on, so this is where it sits on screen at the start of the flight.)
+          if (stacked()) from = { ...from, top: headerLine() - from.height - m.travelled };
+          placeFlyer(plane, from, labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
         },
       );
 
@@ -442,7 +460,7 @@ export default function Arsenal() {
         </div>
 
         {/* Controls */}
-        <div className="relative flex flex-wrap items-center justify-between gap-space-md container-x pb-space-lg lg:pb-space-xl pt-space-sm">
+        <div ref={controls} className="relative flex flex-wrap items-center justify-between gap-space-md container-x pb-space-lg lg:pb-space-xl pt-space-sm">
           <div className="flex items-center gap-space-sm" role="tablist" aria-label="Choose flavour">
             {flavors.map((fl, i) => (
               <button
