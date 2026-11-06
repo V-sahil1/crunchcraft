@@ -38,7 +38,6 @@ export default function Arsenal() {
   const [departed, setDeparted] = useState(false);
   const departedRef = useRef(departed);
   const flyer2 = useRef(null);
-  const controls = useRef(null);
   const indexRef = useRef(index);
   const f = flavors[index];
   indexRef.current = index;
@@ -226,19 +225,20 @@ export default function Arsenal() {
         return { left: col.left + (col.width - w) / 2, top: col.top + (col.height - h) / 2, width: w, height: h };
       };
 
-      // Below lg the stage sits above the copy, so by the time the Lab shows up the pack has long since scrolled
-      // up under the header. Flying it from there dragged it back down across the header and the copy, so on
-      // stacked layouts the flight waits until the copy has cleared, and the pack drops back out from under the
-      // header (where it was last seen) into the Lab.
+      // Below lg the stage sits above the copy, so waiting for the Lab to show up let the pack scroll away under
+      // the header and vanish. On stacked layouts the pack lifts off the moment it reaches the header instead,
+      // and rides down the screen with the reader: the slide copy scrolls up over it (the copy and controls are
+      // layered above the flyer there), then it settles into the Lab.
       const stacked = () => window.matchMedia('(max-width: 1023.98px)').matches;
       const headerLine = () => document.querySelector('header')?.getBoundingClientRect().bottom ?? 64;
 
       // Ends when the Lab's top reaches the top of the screen. Starts when it reaches 85% down the screen, or
-      // on stacked layouts, once the slider controls have slid up under the header.
+      // on stacked layouts, when the stage pack's top meets the bottom of the header. Both are expressed as the
+      // Lab-top position that starts the flight.
       const startLine = () => {
-        if (!stacked() || !controls.current) return window.innerHeight * 0.85;
-        const gap = lab.getBoundingClientRect().top - controls.current.getBoundingClientRect().top;
-        return Math.min(window.innerHeight * 0.85, headerLine() + gap);
+        if (!stacked()) return window.innerHeight * 0.85;
+        const gap = lab.getBoundingClientRect().top - stagePackRect(SCENES[indexRef.current].packAspect).top;
+        return headerLine() + gap;
       };
       const stop = liveFlight(
         () => {
@@ -262,11 +262,17 @@ export default function Arsenal() {
             plane.dataset.src = scene.pack;
             plane.src = scene.pack;
           }
-          let from = stagePackRect(scene.packAspect);
-          // Stacked: the stage pack is far off the top by now; start it with just its bottom edge under the header.
-          // (placeFlyer adds `travelled` back on, so this is where it sits on screen at the start of the flight.)
-          if (stacked()) from = { ...from, top: headerLine() - from.height - m.travelled };
-          placeFlyer(plane, from, labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
+          placeFlyer(plane, stagePackRect(scene.packAspect), labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
+          // Stacked: while the slide copy passes over the pack, fade the pack back so the text stays readable.
+          let opacity = 1;
+          const copy = stacked() && root.current.querySelector('.slide-copy');
+          if (copy) {
+            const c = copy.getBoundingClientRect();
+            const f = plane.getBoundingClientRect();
+            const covered = Math.max(0, Math.min(c.bottom, f.bottom) - Math.max(c.top, f.top)) / (f.height || 1);
+            opacity = 1 - 0.6 * Math.min(1, covered * 1.5);
+          }
+          plane.style.opacity = opacity;
         },
       );
 
@@ -289,7 +295,16 @@ export default function Arsenal() {
         {
           clipPath: 'inset(0% 0% 0% 0% round 0px)',
           ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'top 15%', scrub: true },
+          scrollTrigger: {
+            trigger: root.current,
+            start: 'top bottom',
+            end: 'top 15%',
+            scrub: true,
+            // A clip-path makes the slider its own stacking context, which would trap the copy below the flying
+            // pack (z-40). Once fully grown nothing is clipped anyway, so drop it until we scroll back up.
+            onLeave: () => gsap.set(root.current, { clipPath: 'none' }),
+            onRefresh: (self) => self.progress === 1 && gsap.set(root.current, { clipPath: 'none' }),
+          },
         },
       );
     });
@@ -388,7 +403,7 @@ export default function Arsenal() {
           <div
             key={f.id}
             aria-live="polite"
-            className="slide-copy order-2 lg:order-1 flex flex-col items-start gap-space-md pb-space-md"
+            className="slide-copy relative max-lg:z-[45] order-2 lg:order-1 flex flex-col items-start gap-space-md pb-space-md"
           >
             <span className="px-4 py-1.5 rounded-full bg-white/20 ring-1 ring-inset ring-white/30 backdrop-blur-md font-body text-[13px] font-bold uppercase tracking-wide">
               {f.slide.tag} · {f.drop.split('//')[1].trim()}
@@ -444,7 +459,7 @@ export default function Arsenal() {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous flavour"
-              className="lg:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/25 backdrop-blur-md ring-1 ring-inset ring-white/40 flex items-center justify-center active:scale-90 transition-transform"
+              className="lg:hidden absolute left-0 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full bg-black/25 backdrop-blur-md ring-1 ring-inset ring-white/40 flex items-center justify-center active:scale-90 transition-transform"
             >
               <Icon name="arrow_back" className="text-[22px]" />
             </button>
@@ -452,7 +467,7 @@ export default function Arsenal() {
               type="button"
               onClick={() => go(1)}
               aria-label="Next flavour"
-              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white text-[#1b110c] shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full bg-white text-[#1b110c] shadow-lg flex items-center justify-center active:scale-90 transition-transform"
             >
               <Icon name="arrow_forward" className="text-[22px]" />
             </button>
@@ -460,7 +475,7 @@ export default function Arsenal() {
         </div>
 
         {/* Controls */}
-        <div ref={controls} className="relative flex flex-wrap items-center justify-between gap-space-md container-x pb-space-lg lg:pb-space-xl pt-space-sm">
+        <div className="relative max-lg:z-[45] flex flex-wrap items-center justify-between gap-space-md container-x pb-space-lg lg:pb-space-xl pt-space-sm">
           <div className="flex items-center gap-space-sm" role="tablist" aria-label="Choose flavour">
             {flavors.map((fl, i) => (
               <button
