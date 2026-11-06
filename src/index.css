@@ -243,3 +243,11 @@
     display: none;
   }
 }
+
+/* The page scrollbar is hidden (scrolling still works by wheel, touch, keys and trackpad). */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
