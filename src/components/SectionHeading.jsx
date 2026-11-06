@@ -2,7 +2,7 @@ import Icon from './Icon.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 
 // Eyebrow label + big uppercase title, sized per theme.
-export default function SectionHeading({ eyebrow, eyebrowClass = '', icon, title, center = false, size = 'xl', titleClass }) {
+export default function SectionHeading({ eyebrow, eyebrowClass = '', icon, title, center = false, size = 'xl', titleClass, className = '' }) {
   const { t } = useTheme();
   const titleSize =
     titleClass ??
@@ -17,7 +17,7 @@ export default function SectionHeading({ eyebrow, eyebrowClass = '', icon, title
         ));
 
   return (
-    <div className={`flex flex-col gap-space-xs ${center ? 'items-center text-center' : ''}`}>
+    <div className={`flex flex-col gap-space-xs ${center ? 'items-center text-center' : ''} ${className}`}>
       <span
         className={`inline-flex items-center gap-space-xs font-label text-label-sm uppercase tracking-widest font-bold ${eyebrowClass}`}
       >

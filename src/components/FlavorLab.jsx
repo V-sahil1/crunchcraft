@@ -126,7 +126,7 @@ export default function FlavorLab() {
       </div>
 
       {/* Copy side */}
-      <div className="relative order-2 flex flex-col justify-center gap-[var(--lab-gap)] container-x lg:pl-space-xl pt-space-sm lg:pt-[max(84px,11vh)] pb-20 sm:pb-24 lg:pb-[max(56px,8vh)]">
+      <div className="relative order-2 flex flex-col justify-center gap-[var(--lab-gap)] max-lg:text-center container-x lg:pl-space-xl pt-space-sm lg:pt-[max(84px,11vh)] pb-20 sm:pb-24 lg:pb-[max(56px,8vh)]">
         {t(
           <div
             aria-hidden="true"
@@ -143,11 +143,12 @@ export default function FlavorLab() {
             eyebrowClass={t('text-tertiary', 'text-primary font-black')}
             title="Flavour Anatomy"
             titleClass="text-[length:var(--lab-title)] leading-[1.02]"
+            className="max-lg:items-center"
           />
           <div
             role="tablist"
             aria-label="Flavour profiles"
-            className={`self-stretch sm:self-start flex items-center gap-space-xs p-1.5 rounded-full max-w-full overflow-x-auto ${t(
+            className={`self-stretch sm:self-center lg:self-start flex items-center gap-space-xs p-1.5 rounded-full max-w-full overflow-x-auto ${t(
               'bg-surface-container',
               'bg-white shadow-sm border border-purple-200',
             )}`}
@@ -172,7 +173,7 @@ export default function FlavorLab() {
         </div>
 
         <div role="tabpanel" key={f.id} className="relative z-[35] flex flex-col gap-[calc(var(--lab-gap)*0.7)] animate-reveal">
-            <div className="flex flex-wrap items-center gap-space-xs">
+            <div className="flex flex-wrap items-center max-lg:justify-center gap-space-xs">
               <span
                 className={`px-3 sm:px-space-md py-1 rounded-full font-label text-label-sm font-bold uppercase ${t(
                   'bg-surface-container-high text-primary',
@@ -195,7 +196,7 @@ export default function FlavorLab() {
             >
               {f.name}
             </h3>
-            <p className="text-[length:var(--lab-desc)] leading-[1.55] text-on-surface-variant max-w-[60ch]">{f.desc}</p>
+            <p className="text-[length:var(--lab-desc)] leading-[1.55] text-on-surface-variant max-w-[60ch] max-lg:mx-auto">{f.desc}</p>
 
             <div className="grid grid-cols-2 gap-[calc(var(--lab-gap)*0.5)]">
               <Metric label="Heat Coefficient" value={f.heat.label} valueClass="text-primary">
@@ -212,7 +213,7 @@ export default function FlavorLab() {
               </Metric>
             </div>
 
-            <div>
+            <div className="flex max-lg:justify-center">
               <button
                 type="button"
                 onClick={() => addToCart(f.name, f.price)}

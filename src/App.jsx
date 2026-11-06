@@ -53,7 +53,7 @@ export default function App() {
     <>
       <Header />
       {/* -mt-20 slides the page under the transparent sticky header (h-20). */}
-      <main ref={main} className="w-full overflow-x-hidden -mt-20">
+      <main ref={main} className="w-full overflow-x-hidden supports-[overflow:clip]:overflow-x-clip -mt-20">
         <Hero />
         <Ticker />
         <Arsenal />

@@ -38,6 +38,7 @@ export default function Arsenal() {
   const [departed, setDeparted] = useState(false);
   const departedRef = useRef(departed);
   const flyer2 = useRef(null);
+  const stageRow = useRef(null);
   const indexRef = useRef(index);
   const f = flavors[index];
   indexRef.current = index;
@@ -225,20 +226,19 @@ export default function Arsenal() {
         return { left: col.left + (col.width - w) / 2, top: col.top + (col.height - h) / 2, width: w, height: h };
       };
 
-      // Below lg the stage sits above the copy, so waiting for the Lab to show up let the pack scroll away under
-      // the header and vanish. On stacked layouts the pack lifts off the moment it reaches the header instead,
-      // and rides down the screen with the reader: the slide copy scrolls up over it (the copy and controls are
-      // layered above the flyer there), then it settles into the Lab.
+      // Below lg the stage sits above the copy. It is sticky there (see the stage column), so the 3D pack and its
+      // floating ingredients stay on screen while the copy scrolls up over them; the pack lifts off for the Lab
+      // at the moment the stage unpins, so it never scrolls out of view and the 3D scene is never cut short.
       const stacked = () => window.matchMedia('(max-width: 1023.98px)').matches;
-      const headerLine = () => document.querySelector('header')?.getBoundingClientRect().bottom ?? 64;
 
-      // Ends when the Lab's top reaches the top of the screen. Starts when it reaches 85% down the screen, or
-      // on stacked layouts, when the stage pack's top meets the bottom of the header. Both are expressed as the
-      // Lab-top position that starts the flight.
+      // Ends when the Lab's top reaches the top of the screen. Starts when it reaches 85% down the screen, or on
+      // stacked layouts, when the stage unpins: the row's bottom meets the pinned stage's bottom. Both are
+      // expressed as the Lab-top position that starts the flight (the row→Lab gap is fixed, so this is too).
       const startLine = () => {
-        if (!stacked()) return window.innerHeight * 0.85;
-        const gap = lab.getBoundingClientRect().top - stagePackRect(SCENES[indexRef.current].packAspect).top;
-        return headerLine() + gap;
+        if (!stacked() || !stageRow.current) return window.innerHeight * 0.85;
+        const col = stageCol.current;
+        const pinnedBottom = (parseFloat(getComputedStyle(col).top) || 0) + col.offsetHeight;
+        return pinnedBottom + (lab.getBoundingClientRect().top - stageRow.current.getBoundingClientRect().bottom);
       };
       const stop = liveFlight(
         () => {
@@ -263,7 +263,7 @@ export default function Arsenal() {
             plane.src = scene.pack;
           }
           placeFlyer(plane, stagePackRect(scene.packAspect), labPackRect(flavors[i].id, scene.packAspect), p, m, -4);
-          // Stacked: while the slide copy passes over the pack, fade the pack back so the text stays readable.
+          // Stacked: while the slide copy is over the pack, keep it faded like the pinned stage (see below).
           let opacity = 1;
           const copy = stacked() && root.current.querySelector('.slide-copy');
           if (copy) {
@@ -310,6 +310,30 @@ export default function Arsenal() {
     });
   });
 
+  // Stacked layouts: as the copy scrolls up over the pinned stage, fade the stage back so the text stays readable.
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add('(max-width: 1023.98px)', () => {
+      const col = stageCol.current;
+      gsap.fromTo(
+        col,
+        { opacity: 1 },
+        {
+          opacity: 0.4,
+          ease: 'none',
+          scrollTrigger: {
+            // The copy starts right under the stage, so track the row's top offset by the stage height.
+            trigger: stageRow.current,
+            start: () => `top+=${col.offsetHeight} 45%`,
+            end: () => `top+=${col.offsetHeight} 15%`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    });
+  });
+
   const pauseForHover = (on) => {
     hovering.current = on;
     syncTimer();
@@ -347,7 +371,7 @@ export default function Arsenal() {
           if (e.key === 'ArrowRight') go(1);
           if (e.key === 'ArrowLeft') go(-1);
         }}
-        className="relative w-full min-h-[100svh] flex flex-col overflow-hidden text-white outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-secondary-container"
+        className="relative w-full min-h-[100svh] flex flex-col overflow-hidden supports-[overflow:clip]:overflow-clip text-white outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-secondary-container"
       >
         {/* Cross-fading flavour backgrounds */}
         {flavors.map((fl, i) => (
@@ -398,7 +422,7 @@ export default function Arsenal() {
           </p>
         </div>
 
-        <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] items-center gap-space-md lg:gap-space-xl container-x">
+        <div ref={stageRow} className="relative flex-1 flex flex-col lg:grid lg:grid-cols-[0.85fr_1.15fr] lg:items-center gap-space-md lg:gap-space-xl container-x">
           {/* Copy */}
           <div
             key={f.id}
@@ -436,7 +460,7 @@ export default function Arsenal() {
           </div>
 
           {/* WebGL stage; oversized so floating pieces can drift past the column edges */}
-          <div ref={stageCol} className="order-1 lg:order-2 relative flex items-center justify-center">
+          <div ref={stageCol} className="order-1 lg:order-2 relative max-lg:sticky max-lg:top-12 flex items-center justify-center">
             <Suspense
               fallback={
                 <div className="relative shrink-0 w-[118%] max-w-[min(118%,94svh)] aspect-square flex items-center justify-center">
