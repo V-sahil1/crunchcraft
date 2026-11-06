@@ -1,12 +1,29 @@
+import { useEffect, useState } from 'react';
 import Icon from './Icon.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { crate, flavors, formatPrice } from '../data/content.js';
 
+// Jalapeño, Chili, Truffle: the order of the original image.
+const packs = ['jalapeno', 'chili', 'truffle'].map((id) => flavors.find((fl) => fl.id === id));
+// Background-free pack cut-outs from public/images (the same ones the Arsenal slider uses).
+const packImg = {
+  jalapeno: '/images/slides/jalapeno/pack.webp',
+  chili: '/images/row-1-column-1__2_-removebg-preview.png',
+  truffle: '/images/slides/truffle/pack-noble.webp',
+};
+
 export default function CampaignBanner() {
   const { t } = useTheme();
   const { addToCart } = useCart();
-  const [chili, jalapeno, truffle] = flavors;
+  const [active, setActive] = useState(1); // starts with Chili in the middle, like the original image
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const id = setInterval(() => setActive((a) => (a + 1) % packs.length), 3200);
+    return () => clearInterval(id);
+  }, [paused]);
 
   return (
     <section className="w-full container-x py-space-xl lg:py-24">
@@ -67,25 +84,30 @@ export default function CampaignBanner() {
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-center -space-x-12 lg:-space-x-16 max-w-md w-full">
-          <img
-            src={jalapeno.img}
-            alt={`${jalapeno.name} pouch`}
-            loading="lazy"
-            className="w-32 sm:w-40 lg:w-48 h-auto object-contain rounded-3xl -rotate-12 drop-shadow-2xl relative hover:z-30 hover:scale-110 transition-transform"
-          />
-          <img
-            src={chili.img}
-            alt={`${chili.name} pouch`}
-            loading="lazy"
-            className="w-40 sm:w-48 lg:w-56 h-auto object-contain rounded-3xl z-20 relative drop-shadow-2xl hover:scale-110 transition-transform"
-          />
-          <img
-            src={truffle.img}
-            alt={`${truffle.name} pouch`}
-            loading="lazy"
-            className="w-32 sm:w-40 lg:w-48 h-auto object-contain rounded-3xl rotate-12 drop-shadow-2xl relative hover:z-30 hover:scale-110 transition-transform"
-          />
+        {/* Three packs fanned out as before; every few seconds the middle one changes (hover to pause, click a side pack to bring it forward). */}
+        <div
+          className="relative z-10 w-full max-w-xl h-[270px] sm:h-[330px] lg:h-[380px]"
+          aria-label="Our three flavours"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {packs.map((fl, i) => {
+            const slot = (i - active + packs.length) % packs.length; // 0 = middle, 1 = right, 2 = left
+            const pos = slot === 0 ? 'translateX(-50%) scale(1)' : slot === 1 ? 'translateX(12%) rotate(5deg) scale(0.8)' : 'translateX(-112%) rotate(-5deg) scale(0.8)';
+            return (
+              <img
+                key={fl.id}
+                src={packImg[fl.id]}
+                alt={`${fl.name} pouch`}
+                loading="lazy"
+                onClick={() => setActive(i)}
+                className={`absolute left-1/2 bottom-0 h-[88%] w-auto object-contain drop-shadow-2xl transition-all duration-700 ease-out ${
+                  slot === 0 ? 'z-20' : 'z-10 cursor-pointer opacity-95'
+                }`}
+                style={{ transform: pos }}
+              />
+            );
+          })}
         </div>
       </div>
     </section>

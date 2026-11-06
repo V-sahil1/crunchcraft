@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -9,8 +9,12 @@ import { flavors, formatPrice } from '../data/content.js';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const PACK_IMG = '/images/slides/truffle/pack-noble.webp';
-const truffle = flavors.find((f) => f.id === 'truffle');
+// Background-free pack cut-outs from public/images, in the same order as the flavour tabs.
+const heroPacks = [
+  { id: 'chili', src: '/images/row-1-column-1__2_-removebg-preview.png', alt: 'Fiery Chili & Smoked Cheddar pouch' },
+  { id: 'jalapeno', src: '/images/slides/jalapeno/pack.webp', alt: 'Smoky Jalapeño & Lime Crunch pouch' },
+  { id: 'truffle', src: '/images/slides/truffle/pack-noble.webp', alt: 'Dark Truffle & Roasted Garlic crisps pouch' },
+];
 
 const eqBars = [
   { h: 'h-3', dark: 'bg-primary-container', light: 'bg-primary', delay: 0 },
@@ -85,6 +89,22 @@ export default function Hero() {
   const { t } = useTheme();
   const { addToCart } = useCart();
   const root = useRef(null);
+
+  // The hero pack rotates through the flavours on its own while you are at the top of the page. It holds still
+  // once you scroll, so the pack that flies down into the slider is the one that was showing.
+  const [active, setActive] = useState(heroPacks.findIndex((p) => p.id === 'truffle'));
+  const flavourIndex = flavors.findIndex((f) => f.id === heroPacks[active].id);
+  window.__ccHero = flavourIndex; // the Arsenal flight reads this
+  // The copy, price and badges follow whichever flavour is showing.
+  const truffle = flavors[flavourIndex];
+  const shortFlavour = truffle.shortName.replace(/^\d+\s*/, '');
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const id = setInterval(() => {
+      if (window.scrollY < 8) setActive((a) => (a + 1) % heroPacks.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, []);
 
   useGSAP(
     () => {
@@ -244,7 +264,7 @@ export default function Hero() {
               'bg-[#fef08a] text-[#854d0e] border-2 border-[#facc15]',
             )}`}
           >
-            ⚡ 110dB Audible Crunch
+            ⚡ {truffle.db.label.replace(/\s+/g, '')} Audible Crunch
           </div>
         </div>
 
@@ -260,15 +280,23 @@ export default function Hero() {
                   'bg-white/70',
                 )}`}
               />
-              <img
-                src={PACK_IMG}
-                alt="Dark Truffle & Roasted Garlic crisps pouch"
-                fetchpriority="high"
-                className={`hero-tilt relative h-[var(--hero-pack)] w-auto max-w-[72vw] object-contain ${t(
-                  'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
-                  'drop-shadow-[0_32px_44px_rgba(110,10,50,0.5)]',
-                )}`}
-              />
+              {/* The three packs stacked in one spot; the active one cross-fades in (see the rotation above). */}
+              <div className="hero-tilt relative grid place-items-center">
+                {heroPacks.map((p, i) => (
+                  <img
+                    key={p.id}
+                    src={p.src}
+                    alt={i === active ? p.alt : ''}
+                    aria-hidden={i === active ? undefined : 'true'}
+                    data-active={i === active ? 'true' : 'false'}
+                    fetchpriority={i === active ? 'high' : undefined}
+                    className={`[grid-area:1/1] h-[var(--hero-pack)] w-auto max-w-[72vw] object-contain transition-all duration-700 ease-out ${t(
+                      'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
+                      'drop-shadow-[0_32px_44px_rgba(110,10,50,0.5)]',
+                    )} ${i === active ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -312,7 +340,7 @@ export default function Hero() {
               'bg-secondary-container text-black shadow-2xl border-2 border-yellow-200 hover:bg-white hover:scale-105',
             )}`}
           >
-            <span>Grab the Truffle — {formatPrice(truffle.price)}</span>
+            <span>Grab the {shortFlavour} — {formatPrice(truffle.price)}</span>
             <Icon name="bolt" className="transition-transform duration-300 group-hover:translate-x-1" />
           </button>
           <a

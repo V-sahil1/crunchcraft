@@ -40,6 +40,7 @@ export default function Arsenal() {
   const flyer2 = useRef(null);
   const indexRef = useRef(index);
   const f = flavors[index];
+  indexRef.current = index;
 
   // Which way the last change went (1 = next / right arrow, -1 = previous / left arrow); packs slide in from that side.
   const [direction, setDirection] = useState(1);
@@ -76,7 +77,9 @@ export default function Arsenal() {
   // Keep the Flavour Lab on the same flavour as the slider, so the pack that flies down matches.
   useEffect(() => {
     indexRef.current = index;
-    window.dispatchEvent(new CustomEvent('cc:flavour', { detail: index }));
+    // The Lab only syncs when the pack flies into it (see the second flight), not on every autoplay tick,
+    // so its flavour never changes by itself while you look at it.
+    window.__ccFlavour = index;
   }, [index]);
 
   useEffect(() => {
@@ -149,11 +152,12 @@ export default function Arsenal() {
         setLanded(true);
         return undefined;
       }
-      const aspect = SCENES[HERO_SLIDE].packAspect;
+      // The hero rotates through the flavours, so the flight carries whichever pack it is showing.
+      const heroIndex = () => window.__ccHero ?? HERO_SLIDE;
       const setLand = (on) => {
         if (landedRef.current === on) return;
         landedRef.current = on;
-        if (!on) setIndex(HERO_SLIDE);
+        if (!on) setIndex(heroIndex());
         setLanded(on);
       };
 
@@ -168,7 +172,20 @@ export default function Arsenal() {
           heroPack.style.visibility = p > 0.001 ? 'hidden' : '';
           plane.style.visibility = flying ? 'visible' : 'hidden';
           setLand(p >= 0.999);
-          if (flying) placeFlyer(plane, heroPack.getBoundingClientRect(), stagePackRect(aspect), p, m, 0);
+          if (flying) {
+            const hi = heroIndex();
+            // The slider opens on the flavour the hero was showing, so the landing pack matches.
+            if (indexRef.current !== hi) {
+              indexRef.current = hi;
+              setIndex(hi);
+            }
+            const shown = heroPack.querySelector('img[data-active="true"]') || heroPack;
+            if (shown.src && plane.dataset.src !== shown.src) {
+              plane.dataset.src = shown.src;
+              plane.src = shown.src;
+            }
+            placeFlyer(plane, shown.getBoundingClientRect(), stagePackRect(SCENES[hi].packAspect), p, m, 0);
+          }
         },
       );
 

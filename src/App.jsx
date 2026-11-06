@@ -18,8 +18,9 @@ import SeamCrumbs, { SEAMS } from './components/SeamCrumbs.jsx';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-// Below-the-fold elements that fade up as they scroll into view.
-const REVEAL = 'main section:not(#top) :is(h2, article, figure), main section:not(#top) [role="tabpanel"]';
+// Below-the-fold elements that fade up as they scroll into view. The Manifesto (#story) runs its own scroll story.
+const REVEAL =
+  'main section:not(#top):not(#story) :is(h2, article, figure), main section:not(#top):not(#story) [role="tabpanel"]';
 
 export default function App() {
   const main = useRef(null);

@@ -43,15 +43,18 @@ const labTagPositions = [
 export default function FlavorLab() {
   const { isDark, t } = useTheme();
   const { addToCart } = useCart();
-  const [idx, setIdx] = useState(0);
+  // Start on the flavour the slider is currently showing (it may have been set before this section mounted).
+  const [idx, setIdx] = useState(() => (typeof window !== 'undefined' && window.__ccFlavour) || 0);
   // Follow the slider above, so the pack that flies down from it lands on its own flavour.
   useEffect(() => {
     const onFlavour = (e) => setIdx(e.detail);
     window.addEventListener('cc:flavour', onFlavour);
     return () => window.removeEventListener('cc:flavour', onFlavour);
   }, []);
+  // The slider is the source of truth: scrolling into the Lab always lands on the slider's current flavour.
+  const pick = (i) => setIdx(i);
   const f = flavors[idx];
-  const s = isDark ? f.dark : f.light;
+  const s =isDark ? f.dark : f.light;
   const tagColors = t(
     ['text-primary', 'text-secondary', 'text-tertiary'],
     ['text-primary border-pink-100', 'text-[#b45309] border-amber-100', 'text-tertiary border-purple-100'],
@@ -66,7 +69,8 @@ export default function FlavorLab() {
       )}`}
     >
       {/* Product side: just the cut-out pack, cross-fading per flavour over a soft flavour glow */}
-      <div className="relative order-1 h-[min(64svh,125vw)] sm:h-[min(56svh,78vw)] lg:h-auto pt-16 lg:pt-20 flex flex-col overflow-hidden">
+      {/* On desktop the bottom is feathered so the flavour glow fades out instead of ending on the column's hard edge. */}
+      <div className="relative order-1 h-[min(64svh,125vw)] sm:h-[min(56svh,78vw)] lg:h-auto pt-16 lg:pt-20 flex flex-col overflow-hidden lg:[mask-image:linear-gradient(to_bottom,#000_80%,transparent)]">
         <div className="relative flex-1 flex items-center justify-center">
         <div
           aria-hidden="true"
@@ -146,7 +150,7 @@ export default function FlavorLab() {
                 type="button"
                 role="tab"
                 aria-selected={i === idx}
-                onClick={() => setIdx(i)}
+                onClick={() => pick(i)}
                 className={`flex-1 sm:flex-none px-2 min-[400px]:px-space-md sm:px-space-lg py-2.5 lg:py-2 rounded-full font-label text-label-sm uppercase font-bold tracking-wider whitespace-nowrap transition-all ${
                   i === idx
                     ? t('bg-primary-container text-on-primary-container', 'bg-primary text-white shadow-sm font-black')
