@@ -290,7 +290,9 @@ export default function Hero() {
                     aria-hidden={i === active ? undefined : 'true'}
                     data-active={i === active ? 'true' : 'false'}
                     fetchpriority={i === active ? 'high' : undefined}
-                    className={`[grid-area:1/1] h-[var(--hero-pack)] w-auto max-w-[72vw] object-contain transition-all duration-700 ease-out ${t(
+                    // Only opacity/transform animate: a transition on everything would also delay `visibility`,
+                    // so when the scroll flight hides this pack it lingered for a moment beside the flying copy.
+                    className={`[grid-area:1/1] h-[var(--hero-pack)] w-auto max-w-[72vw] object-contain transition-[opacity,transform] duration-700 ease-out ${t(
                       'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
                       'drop-shadow-[0_32px_44px_rgba(110,10,50,0.5)]',
                     )} ${i === active ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}

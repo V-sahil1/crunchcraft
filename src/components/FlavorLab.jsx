@@ -84,7 +84,7 @@ export default function FlavorLab() {
             data-id={fl.id}
             alt={i === idx ? `${fl.name} pouch` : ''}
             aria-hidden={i === idx ? undefined : 'true'}
-            className={`lab-pack absolute z-10 h-[86%] lg:h-[min(80%,78svh)] w-auto max-w-[80%] object-contain transition-all duration-700 ease-out ${t(
+            className={`lab-pack absolute z-10 h-[86%] lg:h-[min(80%,78svh)] w-auto max-w-[80%] object-contain transition-[opacity,transform] duration-700 ease-out ${t(
               'drop-shadow-[0_40px_60px_rgba(0,0,0,0.85)]',
               'drop-shadow-[0_36px_48px_rgba(110,10,60,0.35)]',
             )} ${i === idx ? 'opacity-100 translate-y-0 rotate-[-4deg] scale-100' : 'opacity-0 translate-y-10 rotate-6 scale-90'}`}
